@@ -19,9 +19,4 @@
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="main.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-  </ItemGroup>
 </Project>
