@@ -22,7 +22,21 @@ VOID GetProcessInfo(DWORD CONST dwProcessID) {
 		for (int i = 0; i < (cbNeeded / sizeof(HMODULE)); i++) {
 			TCHAR szModName[MAX_PATH];
 			if (GetModuleFileNameEx(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR))) {
-				cout << szModName << "   " << hMods[i] << endl;
+				cout << i << ": " << szModName << "   " << hMods[i] << endl;
+			}
+		}
+		int numModule;
+		cout << "Choose Module: " << endl;
+		cin >> numModule;
+		for (int i = 0; i < (cbNeeded / sizeof(HMODULE)); i++) {
+			TCHAR szModName[MAX_PATH];
+			MODULEINFO miModuleInfo;
+			if (i == numModule) {
+				if (GetModuleInformation(hProcess, hMods[i], &miModuleInfo, sizeof(MODULEINFO))) {
+					GetModuleFileNameEx(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR));
+					cout << "Name: " << szModName << endl;
+					cout << "Module Information: \n" << "   EntryPoint: " << miModuleInfo.EntryPoint << "\n   BaseOfDll: " << miModuleInfo.lpBaseOfDll << "\n   SizeOfImage: " << miModuleInfo.SizeOfImage << endl;
+				}
 			}
 		}
 	}
@@ -63,14 +77,13 @@ VOID PrintProcessList(HANDLE CONST hStdOut) {
 		}
 		i++;
 	} while (Process32Next(hSnapshot, &peProcessEntry));
-
-//	DWORD choosingPID;
-//	cout << "Choose PID" << endl;
-//	cin >> choosingPID;
+	DWORD choosingPID;
+	cout << "Choose PID" << endl;
+	cin >> choosingPID;
 	//PrintModuleList(hStdOut, choosingPID);
 	//PrintModuleList(hStdOut, check);
-	cout << "PID: " << check << endl;
-	GetProcessInfo(check);
+	cout << "PID: " << choosingPID << endl;
+	GetProcessInfo(choosingPID);
 	CloseHandle(hSnapshot);
 }
 
