@@ -36,6 +36,15 @@ VOID GetProcessInfo(DWORD CONST dwProcessID) {
 					GetModuleFileNameEx(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR));
 					cout << "Name: " << szModName << endl;
 					cout << "Module Information: \n" << "   EntryPoint: " << miModuleInfo.EntryPoint << "\n   BaseOfDll: " << miModuleInfo.lpBaseOfDll << "\n   SizeOfImage: " << miModuleInfo.SizeOfImage << endl;
+					LPVOID po = miModuleInfo.lpBaseOfDll;
+					byte buff[128];
+					if (ReadProcessMemory(hProcess, po, &buff, sizeof(buff), 0)) {
+
+					}
+					else {
+						cout << "LastErrorCode: " << GetLastError() << endl;
+						return;
+					}
 				}
 			}
 		}
