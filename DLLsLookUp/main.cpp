@@ -5,6 +5,15 @@
 
 using namespace std;
 
+VOID ParsingThisModule(byte* buff) {
+	if ((buff[0] == 0x4D) && (buff[1] == 0x5A)) {
+		if ((buff[buff[0x3C]] == 0x50) && (buff[buff[0x3C] + 1] == 0x45)) {
+			byte bAddressFileHeader = buff[0x3C] + 2;
+			printf("%x %x\n", buff[bAddressFileHeader + 0x14], buff[bAddressFileHeader + 0x15]);
+		}
+	}
+}
+
 VOID GetProcessInfo(DWORD CONST dwProcessID) {
 
 	HMODULE hMods[1024];
@@ -14,9 +23,6 @@ VOID GetProcessInfo(DWORD CONST dwProcessID) {
 	if (hProcess == NULL) {
 		cout << "OpenProcess --- " << "LastErrorCode: " << GetLastError() << endl;
 		return;
-	}
-	else {
-		cout << "HOREY" << endl;
 	}
 	if (EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded)) {
 		for (int i = 0; i < (cbNeeded / sizeof(HMODULE)); i++) {
@@ -37,9 +43,10 @@ VOID GetProcessInfo(DWORD CONST dwProcessID) {
 					cout << "Name: " << szModName << endl;
 					cout << "Module Information: \n" << "   EntryPoint: " << miModuleInfo.EntryPoint << "\n   BaseOfDll: " << miModuleInfo.lpBaseOfDll << "\n   SizeOfImage: " << miModuleInfo.SizeOfImage << endl;
 					LPVOID po = miModuleInfo.lpBaseOfDll;
-					byte buff[128];
-					if (ReadProcessMemory(hProcess, po, &buff, sizeof(buff), 0)) {
-
+					DWORD da = miModuleInfo.SizeOfImage;
+					byte *buff = new byte[da];
+					if (ReadProcessMemory(hProcess, po, buff, da, 0)) {
+						ParsingThisModule(buff);
 					}
 					else {
 						cout << "LastErrorCode: " << GetLastError() << endl;
@@ -89,8 +96,6 @@ VOID PrintProcessList(HANDLE CONST hStdOut) {
 	DWORD choosingPID;
 	cout << "Choose PID" << endl;
 	cin >> choosingPID;
-	//PrintModuleList(hStdOut, choosingPID);
-	//PrintModuleList(hStdOut, check);
 	cout << "PID: " << choosingPID << endl;
 	GetProcessInfo(choosingPID);
 	CloseHandle(hSnapshot);
